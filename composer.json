@@ -1,0 +1,35 @@
+{
+    "name": "joseki/migration",
+    "type": "library",
+    "description": "Joseki/Migration is console database migration tool for your PHP apps.",
+    "keywords": ["joseki", "migrations", "database", "db", "database migrations"],
+    "license": "MIT",
+    "authors": [{
+        "name": "Miroslav Paulik",
+        "email": "miras.paulik@seznam.cz",
+        "homepage": "http://mirapaulik.cz",
+        "role": "Lead Developer"
+    }],
+    "require": {
+        "php": ">=5.3.2",
+        "doctrine/dbal": "2.4.2",
+        "joseki/console": "~0.1",
+        "nette/finder": "~2.2",
+        "nette/reflection": "~2.2",
+        "nette/php-generator": "~2.2",
+        "symfony/console": "~2.7",
+        "symfony/config": "~2.7",
+        "symfony/yaml": "~2.7",
+        "tharos/leanmapper": "~2.0"
+    },
+    "require-dev": {
+        "nette/tester": "~1.0",
+        "mockery/mockery": "@stable"
+    },
+    "autoload": {
+        "classmap": ["src"]
+    },
+    "autoload-dev": {
+        "classmap": ["tests"]
+    }
+}
