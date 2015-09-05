@@ -93,10 +93,6 @@ class Schema extends Command
         if (count($sqls) > 0) {
             $output->writeln('Creating database schema...');
 
-            $sql = '';
-            foreach ($sqls as $query) {
-                $sql .= $query . ';';
-            }
             $output->writeln(count($sqls) . ' queries');
             if ($this->logFile) {
                 file_put_contents($this->logFile, serialize($schema));
@@ -105,7 +101,7 @@ class Schema extends Command
 
             if ($this->migrationDir) {
                 $migrationGenerator = new MigrationGenerator();
-                $migrationGenerator->generate($sql, $this->migrationDir);
+                $migrationGenerator->generate($sqls, $this->migrationDir);
             }
         } else {
             $output->writeln('Nothing to change...');

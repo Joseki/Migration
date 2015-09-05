@@ -26,12 +26,12 @@ class MigrationGenerator
 
 
 
-    public function generate($sqls, $dir)
+    public function generate(array $sqls, $dir)
     {
         $class = new \Nette\PhpGenerator\ClassType($this->name);
         $class->setExtends('Netiso\Joseki\Phinx\DibiMigration');
         $class->addMethod('up')
-            ->addBody('$this->query(?);', array($sqls));
+            ->addBody('$this->query(?);', [$sqls]);
         $filename = rtrim($dir, '/\\') . '/' . $this->filename . '.php';
 
         $content = '<?php' . PHP_EOL . PHP_EOL . (string) $class;
