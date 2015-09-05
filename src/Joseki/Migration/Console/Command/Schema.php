@@ -97,7 +97,7 @@ class Schema extends Command
             foreach ($sqls as $query) {
                 $sql .= $query . ';';
             }
-            $output->writeln(count($sqls) . 'queries');
+            $output->writeln(count($sqls) . ' queries');
             if ($this->logFile) {
                 file_put_contents($this->logFile, serialize($schema));
                 $output->writeln($this->logFile . ' updated');
