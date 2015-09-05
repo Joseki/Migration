@@ -52,7 +52,7 @@ class Schema extends Command
 
     protected function configure()
     {
-        $this->setName('schema')
+        $this->setName('joseki:schema')
             ->setDescription('Creates database schema from LeanMapper entities');
     }
 

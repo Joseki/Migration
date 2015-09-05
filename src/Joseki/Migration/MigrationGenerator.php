@@ -15,13 +15,13 @@ class MigrationGenerator
     function __construct($name = null)
     {
         if (!$name) {
-            $name = 'Migration_migration';
+            $name = 'Joseki_migration';
         }
         $name = Strings::webalize($name);
         $name = str_replace('-', '_', $name);
         $timestamp = new \DateTime();
         $this->filename = $timestamp->format('YmdHis') . '_' . $name;
-        $this->name = $this->underscoreToCamel($name);
+        $this->name = $this->underscoreToCamel($name) . $timestamp->format('YmdHis');
     }
 
 
