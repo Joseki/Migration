@@ -10,6 +10,7 @@ use LeanMapper\IMapper;
 use Nette\DI\Container;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class Schema extends Command
@@ -54,6 +55,7 @@ class Schema extends Command
     {
         $this->setName('joseki:schema')
             ->setDescription('Creates database schema from LeanMapper entities');
+        $this->addOption('print', null, InputOption::VALUE_NONE, 'print sql to input only');
     }
 
 
@@ -92,17 +94,23 @@ class Schema extends Command
 
         if (count($sqls) > 0) {
             $output->writeln('Creating database schema...');
-
             $output->writeln(count($sqls) . ' queries');
-            if ($this->logFile) {
-                file_put_contents($this->logFile, serialize($schema));
-                $output->writeln($this->logFile . ' updated');
+            if ($input->getOption('print')) {
+                foreach($sqls as $query) {
+                    $output->writeln($query);
+                }
+            } else {
+                if ($this->logFile) {
+                    file_put_contents($this->logFile, serialize($schema));
+                    $output->writeln($this->logFile . ' updated');
+                }
+
+                if ($this->migrationDir) {
+                    $migrationGenerator = new MigrationGenerator();
+                    $migrationGenerator->generate($sqls, $this->migrationDir);
+                }
             }
 
-            if ($this->migrationDir) {
-                $migrationGenerator = new MigrationGenerator();
-                $migrationGenerator->generate($sqls, $this->migrationDir);
-            }
         } else {
             $output->writeln('Nothing to change...');
         }
