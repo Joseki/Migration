@@ -1,0 +1,5 @@
+Migration:
+  migrationDir: %appDir%/output
+
+services:
+  mapper: LeanMapper\DefaultMapper
