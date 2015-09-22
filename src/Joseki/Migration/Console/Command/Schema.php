@@ -5,7 +5,7 @@ namespace Joseki\Migration\Console\Command;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Joseki\Console\InvalidArgumentException;
 use Joseki\Migration\MigrationGenerator;
-use Joseki\Migration\SchemaGenerator;
+use Joseki\Migration\Schema\LeanMapperSchemaGenerator;
 use LeanMapper\IMapper;
 use Nette\DI\Container;
 use Symfony\Component\Console\Command\Command;
@@ -81,22 +81,22 @@ class Schema extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $entities = $this->getEntities();
-        $generator = new SchemaGenerator($this->mapper);
+        $generator = new LeanMapperSchemaGenerator($this->mapper);
         $platform = new MySqlPlatform;
         $schema = $generator->createSchema($entities);
 
         if (file_exists($this->logFile)) {
             $fromSchema = unserialize(file_get_contents($this->logFile));
-            $sqls = $schema->getMigrateFromSql($fromSchema, $platform);
+            $sqlStatements = $schema->getMigrateFromSql($fromSchema, $platform);
         } else {
-            $sqls = $schema->toSql($platform);
+            $sqlStatements = $schema->toSql($platform);
         }
 
-        if (count($sqls) > 0) {
+        if (count($sqlStatements) > 0) {
             $output->writeln('Creating database schema...');
-            $output->writeln(count($sqls) . ' queries');
+            $output->writeln(count($sqlStatements) . ' queries');
             if ($input->getOption('print')) {
-                foreach($sqls as $query) {
+                foreach($sqlStatements as $query) {
                     $output->writeln($query);
                 }
             } else {
@@ -107,7 +107,7 @@ class Schema extends Command
 
                 if ($this->migrationDir) {
                     $migrationGenerator = new MigrationGenerator();
-                    $migrationGenerator->generate($sqls, $this->migrationDir);
+                    $migrationGenerator->generate($sqlStatements, $this->migrationDir);
                 }
             }
 

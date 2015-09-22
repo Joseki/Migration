@@ -1,6 +1,6 @@
 <?php
 
-namespace Joseki\Migration;
+namespace Joseki\Migration\Schema;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
@@ -12,7 +12,7 @@ use LeanMapper\Reflection\Property;
 use LeanMapper\Relationship\HasMany;
 use LeanMapper\Relationship\HasOne;
 
-class SchemaGenerator
+class LeanMapperSchemaGenerator
 {
 
     private $mapper;
