@@ -1,6 +1,6 @@
 <?php
 
-namespace JosekiTests\FileTemplate;
+namespace JosekiTests\Migration;
 
 use Joseki\Migration\Console\Command\Schema;
 use Joseki\Migration\DI\MigrationExtension;
@@ -38,7 +38,7 @@ class ExtensionTest extends \Tester\TestCase
         $container = $configurator->createContainer();
 
         /** @var Schema $command */
-        $command = $container->getByType('Joseki\FileTemplate\Console\Command\Schema');
+        $command = $container->getByType('Joseki\Migration\Console\Command\Schema');
         Assert::true($command instanceof Schema);
     }
 
