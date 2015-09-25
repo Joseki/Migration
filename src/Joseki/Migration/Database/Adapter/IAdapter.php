@@ -1,6 +1,6 @@
 <?php
 
-namespace Joseki\Migration\Database\Adapter;
+namespace Joseki\Migration\Database\Adapters;
 
 use Joseki\Migration\AbstractMigration;
 

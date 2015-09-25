@@ -1,6 +1,6 @@
 <?php
 
-namespace Joseki\Migration\Database\Adapter;
+namespace Joseki\Migration\Database\Adapters;
 
 use Joseki\Migration\AbstractMigration;
 
@@ -28,7 +28,7 @@ abstract class Adapter implements IAdapter
 
     public function getCurrentVersion()
     {
-        $version = $this->connection->select('%n', 'version')->from('%n', $this->table)->orderBy('%n DESC', 'version')->limit(1)->fetchSingle();
+        $version = $this->connection->select('%n', 'version')->from('%n', $this->table)->orderBy('%n DESC', 'version')->fetchSingle();
         return $version ? (int)$version : 0;
     }
 
@@ -37,6 +37,6 @@ abstract class Adapter implements IAdapter
     public function log(AbstractMigration $migration, $timestamp)
     {
         $datetime = new \DateTime();
-        $this->connection->insert($this->table, ['version' => $migration->getVersion(), 'executed' => $datetime->setTimestamp($timestamp)]);
+        $this->connection->insert($this->table, ['version' => $migration->getVersion(), 'executed' => $datetime->setTimestamp($timestamp)])->execute();
     }
 }

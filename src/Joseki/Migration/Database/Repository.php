@@ -3,7 +3,7 @@
 namespace Joseki\Migration\Database;
 
 use Joseki\Migration\AbstractMigration;
-use Joseki\Migration\Database\Adapter\IAdapter;
+use Joseki\Migration\Database\Adapters\IAdapter;
 
 class Repository
 {
@@ -17,7 +17,9 @@ class Repository
     /** @var  string */
     private $table;
 
-    private static $defaultAdapter = 'MysqlAdapter';
+    private static $defaultAdapter = 'Joseki\Migration\Database\Adapters\MysqlAdapter';
+
+    private $hasSchemaTable;
 
 
 
@@ -39,14 +41,15 @@ class Repository
         $this->connection->begin();
 
         try {
-            if (!$this->getAdapter()->hasSchemaTable()) {
+            if (!$this->hasSchemaTable()) {
                 $this->getAdapter()->createSchemaTable();
+                $this->hasSchemaTable = true;
             }
             $migration->run();
             $this->getAdapter()->log($migration, time());
         } catch (\Exception $e) {
             $this->connection->rollback();
-            return;
+            throw $e;
         }
 
         $this->connection->commit();
@@ -56,6 +59,10 @@ class Repository
 
     public function getCurrentVersion()
     {
+        if (!$this->hasSchemaTable()) {
+            $this->getAdapter()->createSchemaTable();
+            $this->hasSchemaTable = true;
+        }
         return $this->getAdapter()->getCurrentVersion();
     }
 
@@ -70,7 +77,7 @@ class Repository
             $driver = ucfirst(strtolower($this->connection->getConfig('driver')));
             switch ($this->connection->getConfig($driver)) {
                 case IAdapter::DRIVER_MYSQL:
-                    $class = 'MysqlAdapter';
+                    $class = 'Joseki\Migration\Database\Adapters\MysqlAdapter';
                     break;
                 default: // fallback
                     $class = self::$defaultAdapter;
@@ -79,5 +86,15 @@ class Repository
             $this->adapter = new $class($this->connection, $this->table);
         }
         return $this->adapter;
+    }
+
+
+
+    private function hasSchemaTable()
+    {
+        if ($this->hasSchemaTable === null) {
+            $this->hasSchemaTable = $this->getAdapter()->hasSchemaTable();
+        }
+        return $this->hasSchemaTable;
     }
 }

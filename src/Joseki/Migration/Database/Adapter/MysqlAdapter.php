@@ -1,6 +1,6 @@
 <?php
 
-namespace Joseki\Migration\Database\Adapter;
+namespace Joseki\Migration\Database\Adapters;
 
 class MysqlAdapter extends Adapter
 {
