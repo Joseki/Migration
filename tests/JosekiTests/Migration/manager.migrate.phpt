@@ -12,29 +12,14 @@ require_once __DIR__ . '/../bootstrap.php';
 
 class Migration_1443096980_Mock1 extends AbstractMigration
 {
-
-    public function getName()
-    {
-        return 'Mock 1';
-    }
 }
 
 class Migration_1443096980_Mock2 extends AbstractMigration
 {
-
-    public function getName()
-    {
-        return 'Mock 2';
-    }
 }
 
 class Migration_1443096984_Mock3 extends AbstractMigration
 {
-
-    public function getName()
-    {
-        return 'Mock 3';
-    }
 }
 
 /**
