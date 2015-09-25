@@ -6,7 +6,7 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Joseki\Console\InvalidArgumentException;
 use Joseki\Migration\Generator\MigrationClassGenerator;
 use Joseki\Migration\MigrationGenerator;
-use Joseki\Migration\Schema\LeanMapperSchemaGenerator;
+use Joseki\Migration\Generator\LeanMapperSchemaGenerator;
 use LeanMapper\IMapper;
 use Nette\DI\Container;
 use Symfony\Component\Console\Command\Command;

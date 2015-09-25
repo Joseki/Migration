@@ -1,9 +1,11 @@
 <?php
 
 
-namespace Joseki\Migration\DBAL\Types;
+namespace Joseki\Migration\Generator\DBAL\Types;
 
-class LongTextType extends \Doctrine\DBAL\Types\TextType
+use Doctrine\DBAL\Types\TextType;
+
+class LongTextType extends TextType
 {
     const LONG_TEXT = 'longtext';
 

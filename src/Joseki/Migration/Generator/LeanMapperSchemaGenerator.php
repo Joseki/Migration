@@ -1,13 +1,13 @@
 <?php
 
-namespace Joseki\Migration\Schema;
+namespace Joseki\Migration\Generator;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
 use LeanMapper\Exception;
 use LeanMapper\IMapper;
-use Joseki\Migration\DBAL\Types\LongTextType;
+use Joseki\Migration\Generator\DBAL\Types\LongTextType;
 use LeanMapper\Reflection\Property;
 use LeanMapper\Relationship\HasMany;
 use LeanMapper\Relationship\HasOne;
