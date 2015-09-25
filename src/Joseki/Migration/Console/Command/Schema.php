@@ -4,6 +4,7 @@ namespace Joseki\Migration\Console\Command;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Joseki\Console\InvalidArgumentException;
+use Joseki\Migration\Generator\MigrationClassGenerator;
 use Joseki\Migration\MigrationGenerator;
 use Joseki\Migration\Schema\LeanMapperSchemaGenerator;
 use LeanMapper\IMapper;
@@ -106,8 +107,9 @@ class Schema extends Command
                 }
 
                 if ($this->migrationDir) {
-                    $migrationGenerator = new MigrationGenerator();
-                    $migrationGenerator->generate($sqlStatements, $this->migrationDir);
+                    $migrationGenerator = new MigrationClassGenerator('LeanMapper');
+                    $migrationGenerator->setQueries($sqlStatements);
+                    $migrationGenerator->saveToDirectory($this->migrationDir);
                 }
             }
 

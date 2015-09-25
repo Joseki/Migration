@@ -1,0 +1,6 @@
+Migration:
+  migrationDir: %appDir%/files
+
+services:
+  mapper: LeanMapper\DefaultMapper
+  connection: DibiConnection([])

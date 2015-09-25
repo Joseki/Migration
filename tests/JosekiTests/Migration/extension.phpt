@@ -11,6 +11,9 @@ use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
+/**
+ * @testCase
+ */
 class ExtensionTest extends \Tester\TestCase
 {
 
@@ -32,7 +35,7 @@ class ExtensionTest extends \Tester\TestCase
     public function testExtensionLoad()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.loader.neon', $configurator::NONE);
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -40,8 +43,10 @@ class ExtensionTest extends \Tester\TestCase
         /** @var Schema $command */
         $command = $container->getByType('Joseki\Migration\Console\Command\Schema');
         Assert::true($command instanceof Schema);
-    }
 
+        $objects = $container->findByType('Joseki\Migration\AbstractMigration');
+        Assert::count(3, $objects);
+    }
 }
 
 \run(new ExtensionTest());
