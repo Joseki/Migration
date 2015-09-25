@@ -34,8 +34,6 @@ abstract class AbstractMigration
         $this->migrate();
         $this->afterMigrate();
     }
-<<<<<<< HEAD
-=======
 
 
 
@@ -49,6 +47,10 @@ abstract class AbstractMigration
 
 
 
-    abstract public function getName();
->>>>>>> 113602b... y
+    public function getName()
+    {
+        $class = '_' . get_class($this);
+        return substr($class,  strrpos($class, '_') + 1);
+    }
+
 }

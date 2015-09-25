@@ -7,8 +7,4 @@ use Joseki\Migration\DefaultMigration;
 class Migration3 extends DefaultMigration
 {
 
-    public function getName()
-    {
-
-    }
 }
