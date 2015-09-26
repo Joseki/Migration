@@ -31,7 +31,7 @@ class Migrate extends Command
     protected function configure()
     {
         $this->addOption('--date', '-d', InputOption::VALUE_OPTIONAL, 'The date to migrate to');
-        $this->setName('migrate');
+        $this->setName('joseki:migration:migrate');
         $this->setDescription('Migrate the database');
     }
 

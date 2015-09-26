@@ -54,7 +54,7 @@ class Schema extends Command
 
     protected function configure()
     {
-        $this->setName('joseki:schema')
+        $this->setName('joseki:migration:from-lm')
             ->setDescription('Creates database schema from LeanMapper entities');
         $this->addOption('print', null, InputOption::VALUE_NONE, 'print sql to input only');
     }
