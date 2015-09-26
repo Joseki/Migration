@@ -4,7 +4,6 @@ namespace Joseki\Migration\Generator;
 
 use Joseki\Migration\Helper;
 use Nette\PhpGenerator\PhpFile;
-use Nette\Utils\Strings;
 
 class MigrationClassGenerator
 {
@@ -63,8 +62,6 @@ class MigrationClassGenerator
 
         $class->addMethod('afterMigrate')
             ->addBody('parent::afterMigrate();');
-
-        $class->addMethod('getName');
 
         return $file;
     }
