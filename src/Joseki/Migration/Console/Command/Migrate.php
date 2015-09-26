@@ -37,6 +37,15 @@ class Migrate extends Command
 
 
 
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->manager->onEvent[] = function ($message) use ($output) {
+            $output->writeln($message);
+        };
+    }
+
+
+
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $date = $input->getOption('date');
