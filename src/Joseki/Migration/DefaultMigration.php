@@ -25,10 +25,11 @@ class DefaultMigration extends AbstractMigration
         $this->dibiConnection->begin();
         try {
             parent::run();
-            $this->dibiConnection->commit();
         } catch (\Exception $e) {
             $this->dibiConnection->rollback();
+            throw $e;
         }
+        $this->dibiConnection->commit();
     }
 
 
