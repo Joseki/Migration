@@ -30,9 +30,10 @@ class Create extends Command
 
     protected function configure()
     {
-        $this->addArgument('name', InputArgument::REQUIRED, 'Migration name');
         $this->setName('joseki:migration:create');
         $this->setDescription('Create an empty migration');
+
+        $this->addArgument('name', InputArgument::REQUIRED, 'Migration name');
     }
 
 
