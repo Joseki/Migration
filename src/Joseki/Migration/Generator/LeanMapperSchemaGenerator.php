@@ -36,7 +36,7 @@ class LeanMapperSchemaGenerator
         $config = $this->defaultConfig;
 
         $schema = new Schema();
-        Type::addType(LongTextType::LONG_TEXT, '\Joseki\Migration\DBAL\Types\LongTextType');
+        Type::addType(LongTextType::LONG_TEXT, '\Joseki\Migration\Generator\DBAL\Types\LongTextType');
 
         $createdTables = array();
         /** @var \LeanMapper\Entity $entity */
