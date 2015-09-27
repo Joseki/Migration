@@ -60,6 +60,15 @@ class Manager extends Object
 
 
 
+    public function createFromLeanMapper($sqlStatements, $name)
+    {
+        $generator = new MigrationClassGenerator($name, $this->migrationPrefix);
+        $generator->setQueries($sqlStatements);
+        $generator->saveToDirectory($this->migrationDir);
+    }
+
+
+
     public function migrate()
     {
         $currentVersion = $this->repository->getCurrentVersion();

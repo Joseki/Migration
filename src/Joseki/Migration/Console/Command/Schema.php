@@ -5,11 +5,13 @@ namespace Joseki\Migration\Console\Command;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Joseki\Console\InvalidArgumentException;
 use Joseki\Migration\Generator\MigrationClassGenerator;
+use Joseki\Migration\Manager;
 use Joseki\Migration\MigrationGenerator;
 use Joseki\Migration\Generator\LeanMapperSchemaGenerator;
 use LeanMapper\IMapper;
 use Nette\DI\Container;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,8 +19,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 class Schema extends Command
 {
 
-    /** @var array */
-    protected $config;
+    /** @var Manager */
+    private $manager;
 
     /** @var Container */
     private $container;
@@ -28,34 +30,31 @@ class Schema extends Command
 
     private $logFile;
 
-    private $migrationDir;
-
 
 
     /**
+     * @param null|string $logFile
+     * @param Manager $manager
      * @param Container $container
      * @param IMapper $mapper
-     * @param $logFile
-     * @param $migrationDir
      */
-    function __construct($logFile, $migrationDir, Container $container, IMapper $mapper)
+    function __construct($logFile, Manager $manager, Container $container, IMapper $mapper)
     {
         parent::__construct();
         $this->container = $container;
         $this->mapper = $mapper;
         $this->logFile = realpath($logFile);
-        if (!is_dir($migrationDir)) {
-            throw new InvalidArgumentException("Directory '$migrationDir' not found");
-        }
-        $this->migrationDir = realpath($migrationDir);
+        $this->manager = $manager;
     }
 
 
 
     protected function configure()
     {
-        $this->setName('joseki:migration:from-lm')
-            ->setDescription('Creates database schema from LeanMapper entities');
+        $this->setName('joseki:migration:from-lm');
+        $this->setDescription('Creates database schema from LeanMapper entities');
+
+        $this->addArgument('name', InputArgument::OPTIONAL, 'Migration name', 'LeanMapper generated');
         $this->addOption('print', null, InputOption::VALUE_NONE, 'print sql to input only');
     }
 
@@ -97,7 +96,7 @@ class Schema extends Command
             $output->writeln('Creating database schema...');
             $output->writeln(count($sqlStatements) . ' queries');
             if ($input->getOption('print')) {
-                foreach($sqlStatements as $query) {
+                foreach ($sqlStatements as $query) {
                     $output->writeln($query);
                 }
             } else {
@@ -106,11 +105,8 @@ class Schema extends Command
                     $output->writeln($this->logFile . ' updated');
                 }
 
-                if ($this->migrationDir) {
-                    $migrationGenerator = new MigrationClassGenerator('LeanMapper');
-                    $migrationGenerator->setQueries($sqlStatements);
-                    $migrationGenerator->saveToDirectory($this->migrationDir);
-                }
+                $name = $input->getArgument('name');
+                $this->manager->createFromLeanMapper($sqlStatements, $name);
             }
 
         } else {
