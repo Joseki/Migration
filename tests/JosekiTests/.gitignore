@@ -1,3 +1,2 @@
 coverage.dat
-*/output/*.actual
-*/output/*.expected
+*/output/*

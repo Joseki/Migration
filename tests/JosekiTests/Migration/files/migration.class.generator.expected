@@ -24,9 +24,4 @@ class Migration_1442930919_Test extends Joseki\Migration\DefaultMigration
 		parent::afterMigrate();
 	}
 
-
-	public function getName()
-	{
-	}
-
 }

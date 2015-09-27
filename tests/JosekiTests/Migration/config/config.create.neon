@@ -1,0 +1,14 @@
+parameters:
+  db:
+    host: 127.0.0.1
+    driver: mysql
+    database: testing
+    username: root
+    password:
+
+Migration:
+  migrationDir: %appDir%/output/create
+
+services:
+  mapper: LeanMapper\DefaultMapper
+  connection: DibiConnection(%db%)
