@@ -41,7 +41,7 @@ class MigrationExtension extends CompilerExtension
             ->setClass('Joseki\Migration\Manager', [$config['migrationDir'], $config['migrationPrefix']]);
 
         $container->addDefinition($this->prefix('command.schema'))
-            ->setClass('Joseki\Migration\Console\Command\Schema', [$config['logFile'], $config['migrationDir']])
+            ->setClass('Joseki\Migration\Console\Command\Schema', [$config['logFile']])
             ->addTag(self::TAG_JOSEKI_COMMAND)
             ->addTag(self::TAG_KDYBY_COMMAND);
 
