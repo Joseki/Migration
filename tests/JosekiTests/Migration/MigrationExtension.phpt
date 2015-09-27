@@ -2,6 +2,8 @@
 
 namespace JosekiTests\Migration;
 
+use Joseki\Migration\Console\Command\Create;
+use Joseki\Migration\Console\Command\Migrate;
 use Joseki\Migration\Console\Command\Schema;
 use Joseki\Migration\DI\MigrationExtension;
 use Nette\Configurator;
@@ -43,6 +45,10 @@ class ExtensionTest extends \Tester\TestCase
         /** @var Schema $command */
         $command = $container->getByType('Joseki\Migration\Console\Command\Schema');
         Assert::true($command instanceof Schema);
+        $command = $container->getByType('Joseki\Migration\Console\Command\Create');
+        Assert::true($command instanceof Create);
+        $command = $container->getByType('Joseki\Migration\Console\Command\Migrate');
+        Assert::true($command instanceof Migrate);
 
         $objects = $container->findByType('Joseki\Migration\AbstractMigration');
         Assert::count(3, $objects);
