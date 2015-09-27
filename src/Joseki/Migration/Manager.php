@@ -108,8 +108,9 @@ class Manager extends Object
 
         try {
             foreach($migrations as $version => $migration){
-                $this->repository->migrate($migration);
                 $this->onEvent("Migrating to {$migration->getVersion()}");
+                $this->repository->migrate($migration);
+                $this->onEvent("Migrating to {$migration->getVersion()} succeed");
             }
         } catch (\Exception $e) {
             $this->onEvent('An error occurred during migration. See log for more info.');//todo
