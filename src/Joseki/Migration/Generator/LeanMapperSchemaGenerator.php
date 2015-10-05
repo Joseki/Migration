@@ -5,6 +5,7 @@ namespace Joseki\Migration\Generator;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use LeanMapper\Entity;
 use LeanMapper\Exception;
 use LeanMapper\IMapper;
 use Joseki\Migration\Generator\DBAL\Types\LongTextType;
@@ -98,9 +99,8 @@ class LeanMapperSchemaGenerator
 
                             $sourceTableType = $this->getRelationshipColumnType($relationship->getColumnReferencingSourceTable());
                             $targetTableType = $this->getRelationshipColumnType($relationship->getColumnReferencingTargetTable());
-                            $relationshipTable->addColumn($relationship->getColumnReferencingSourceTable(), $sourceTableType);
-                            $relationshipTable->addColumn($relationship->getColumnReferencingTargetTable(), $targetTableType);
-
+                            $sourceColumn = $relationshipTable->addColumn($relationship->getColumnReferencingSourceTable(), $sourceTableType);
+                            $targetColumn = $relationshipTable->addColumn($relationship->getColumnReferencingTargetTable(), $targetTableType);
                             $relationshipTable->addForeignKeyConstraint(
                                 $table,
                                 [$relationship->getColumnReferencingSourceTable()],
@@ -114,6 +114,16 @@ class LeanMapperSchemaGenerator
                                 [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
                                 array('onDelete' => 'CASCADE')
                             );
+
+                            $sourceColumnProperty = $this->getRelationshipColumnProperty($tableName);
+                            if ($this->getType($sourceColumnProperty) === 'string' && $sourceColumnProperty->hasCustomFlag('size')) {
+                                $sourceColumn->setLength($sourceColumnProperty->getCustomFlagValue('size'));
+                            }
+
+                            $targetColumnProperty = $this->getRelationshipColumnProperty($relationship->getTargetTable());
+                            if ($this->getType($targetColumnProperty) === 'string' && $targetColumnProperty->hasCustomFlag('size')) {
+                                $targetColumn->setLength($targetColumnProperty->getCustomFlagValue('size'));
+                            }
                         }
                     } elseif ($relationship instanceof HasOne) {
                         $targetEntityClass = $property->getType();
@@ -227,13 +237,25 @@ class LeanMapperSchemaGenerator
 
 
 
-    private function getRelationshipColumnType($table = null)
+    private function getRelationshipColumnType($table)
+    {
+        $property = $this->getRelationshipColumnProperty($table);
+        return $this->getType($property);
+    }
+
+
+
+    /**
+     * @param $table
+     * @return Property
+     */
+    private function getRelationshipColumnProperty($table)
     {
         $class = $this->mapper->getEntityClass($table);
+        /** @var Entity $entity */
         $entity = new $class;
         $primaryKey = $this->mapper->getPrimaryKey($table);
-        $property = $entity->getReflection($this->mapper)->getEntityProperty($primaryKey);
-        return $this->getType($property);
+        return $entity->getReflection($this->mapper)->getEntityProperty($primaryKey);
     }
 
 }
