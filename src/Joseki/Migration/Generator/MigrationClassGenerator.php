@@ -38,7 +38,7 @@ class MigrationClassGenerator
 
     public function setQueries(array $sql)
     {
-        $this->setMigrateBody("\$this->query(?);", [$sql]);
+        $this->setMigrateBody("\$this->query(?);", $sql);
     }
 
 
