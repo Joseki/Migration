@@ -60,7 +60,7 @@ class MigrationExtension extends CompilerExtension
                 continue;
             }
 
-            $name = $this->prefix('migration' . $index);
+            $name = $this->prefix('migration.' . $index);
 
             $container->addDefinition($name)
                 ->setClass($class)
