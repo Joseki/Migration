@@ -76,7 +76,7 @@ class LeanMapperSchemaGenerator
                                 "Entity {$reflection->name}:{$property->getName()} - m:unique can not be used together with m:pk."
                             );
                         }
-                        if ($config['autoincrement'] == 'auto') {
+                        if ($config['autoincrement'] == 'auto' && $type === 'integer') {
                             $column->setAutoincrement(true);
                         }
                     }
@@ -131,6 +131,12 @@ class LeanMapperSchemaGenerator
                         $targetType = $this->getRelationshipColumnType($targetTable);
 
                         $column = $table->addColumn($relationship->getColumnReferencingTargetTable(), $targetType);
+
+                        $targetColumnProperty = $this->getRelationshipColumnProperty($targetTable);
+                        if ($this->getType($targetColumnProperty) === 'string' && $targetColumnProperty->hasCustomFlag('size')) {
+                            $column->setLength($targetColumnProperty->getCustomFlagValue('size'));
+                        }
+
                         if (!$property->hasCustomFlag('nofk')) {
                             $cascade = $property->isNullable() ? 'SET NULL' : 'CASCADE';
                             $table->addForeignKeyConstraint(

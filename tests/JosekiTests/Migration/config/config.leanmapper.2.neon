@@ -13,6 +13,6 @@ LeanMapper:
 
   packages:
     Tables:
-      - book
-      - tag
+      - language
+      - translation
 

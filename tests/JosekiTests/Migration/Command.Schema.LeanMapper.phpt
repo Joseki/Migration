@@ -36,7 +36,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
 
 
 
-    public function testCreateCommand()
+    public function testHasMany()
     {
         $configurator = $this->prepareConfigurator();
         $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
@@ -56,6 +56,30 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
         $commandTester->execute(['command' => $command->getName(), 'name' => 'Foo', '--print' => true]);
 
         Assert::matchFile(__DIR__ . '/files/Command.Schema.LeanMapper.1.expect', $commandTester->getDisplay());
+    }
+
+
+
+    public function testHasOne()
+    {
+        $configurator = $this->prepareConfigurator();
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        /** @var Schema $command */
+        $command = $container->getByType('Joseki\Migration\Console\Command\Schema');
+        Assert::true($command instanceof Schema);
+
+        $application = new Application();
+        $application->add($command);
+
+        $command = $application->find('joseki:migration:from-lm');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['command' => $command->getName(), 'name' => 'Foo', '--print' => true]);
+
+        Assert::matchFile(__DIR__ . '/files/Command.Schema.LeanMapper.2.expect', $commandTester->getDisplay());
     }
 }
 
