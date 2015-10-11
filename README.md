@@ -43,7 +43,7 @@ Migration:
   migrationDir:                     # specifies location of migrations
   migrationPrefix: Migration        # migration filename prefix
   migrationTable: _migration_log    # database table for migration sync
-  logFile                           # OPTIONAL
+  logFile:                          # OPTIONAL
 ```
 
 Running a console command
