@@ -100,10 +100,8 @@ class Schema extends Command
                     $output->writeln($query);
                 }
             } else {
-                if ($this->logFile) {
-                    file_put_contents($this->logFile, serialize($schema));
-                    $output->writeln($this->logFile . ' updated');
-                }
+                file_put_contents($this->logFile, serialize($schema));
+                $output->writeln($this->logFile . ' updated');
 
                 $name = $input->getArgument('name');
                 $this->manager->createFromLeanMapper($sqlStatements, $name);
