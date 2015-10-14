@@ -40,7 +40,7 @@ class Schema extends Command
         parent::__construct();
         $this->container = $container;
         $this->mapper = $mapper;
-        $this->logFile = realpath($logFile);
+        $this->logFile = $logFile;
         $this->manager = $manager;
     }
 
