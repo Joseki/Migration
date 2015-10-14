@@ -3,10 +3,7 @@
 namespace Joseki\Migration\Console\Command;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
-use Joseki\Console\InvalidArgumentException;
-use Joseki\Migration\Generator\MigrationClassGenerator;
 use Joseki\Migration\Manager;
-use Joseki\Migration\MigrationGenerator;
 use Joseki\Migration\Generator\LeanMapperSchemaGenerator;
 use LeanMapper\IMapper;
 use Nette\DI\Container;
