@@ -20,6 +20,7 @@ class LeanMapperSchemaGenerator
 
     private $defaultConfig = array(
         'autoincrement' => 'auto',
+        'collate' => 'utf8_unicode_ci',
     );
 
 
@@ -31,10 +32,10 @@ class LeanMapperSchemaGenerator
 
 
 
-    public function createSchema(array $entities)
+    public function createSchema(array $entities, array $config = array())
     {
 
-        $config = $this->defaultConfig;
+        $config = array_merge($this->defaultConfig, $config);
 
         $schema = new Schema();
         Type::addType(LongTextType::LONG_TEXT, '\Joseki\Migration\Generator\DBAL\Types\LongTextType');
@@ -52,6 +53,7 @@ class LeanMapperSchemaGenerator
 
             $tableName = $this->mapper->getTable(get_class($entity));
             $table = $schema->createTable($tableName);
+            $table->addOption('collate', $config['collate']);
             $primaryKey = $this->mapper->getPrimaryKey($tableName);
 
             foreach ($properties as $property) {

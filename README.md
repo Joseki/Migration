@@ -44,6 +44,8 @@ Migration:
   migrationPrefix: Migration        # migration filename prefix
   migrationTable: _migration_log    # database table for migration sync
   logFile:                          # OPTIONAL
+  options:                          # OPTIONAL
+    collate: 'utf8_unicode_ci'      # OPTIONAL (DEFAULT VALUE)
 ```
 
 Running a console command

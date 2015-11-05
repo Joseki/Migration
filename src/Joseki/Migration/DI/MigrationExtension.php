@@ -17,7 +17,8 @@ class MigrationExtension extends CompilerExtension
         'migrationDir' => null,
         'migrationPrefix' => 'Migration',
         'migrationTable' => '_migration_log',
-        'logFile' => null
+        'logFile' => null,
+        'options' => [],
     ];
 
 
@@ -29,6 +30,7 @@ class MigrationExtension extends CompilerExtension
 
         Validators::assert($config['migrationDir'], 'string', 'Migration location directory');
         Validators::assert($config['migrationPrefix'], 'string', 'Migration name prefix');
+        Validators::assert($config['options'], 'array', 'Generated SQL options');
 
         if (!$config['logFile']) {
             $config['logFile'] = rtrim($config['migrationDir'], "/") . '/_schema.txt';
@@ -41,7 +43,7 @@ class MigrationExtension extends CompilerExtension
             ->setClass('Joseki\Migration\Manager', [$config['migrationDir'], $config['migrationPrefix']]);
 
         $container->addDefinition($this->prefix('command.schema'))
-            ->setClass('Joseki\Migration\Console\Command\Schema', [$config['logFile']])
+            ->setClass('Joseki\Migration\Console\Command\Schema', [$config['logFile'], $config['options']])
             ->addTag(self::TAG_JOSEKI_COMMAND)
             ->addTag(self::TAG_KDYBY_COMMAND);
 

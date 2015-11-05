@@ -27,21 +27,26 @@ class Schema extends Command
 
     private $logFile;
 
+    /** @var array */
+    private $options;
+
 
 
     /**
      * @param null|string $logFile
+     * @param array $options
      * @param Manager $manager
      * @param Container $container
      * @param IMapper $mapper
      */
-    function __construct($logFile, Manager $manager, Container $container, IMapper $mapper)
+    function __construct($logFile, array $options = array(), Manager $manager, Container $container, IMapper $mapper)
     {
         parent::__construct();
         $this->container = $container;
         $this->mapper = $mapper;
         $this->logFile = $logFile;
         $this->manager = $manager;
+        $this->options = $options;
     }
 
 
@@ -80,7 +85,7 @@ class Schema extends Command
         $entities = $this->getEntities();
         $generator = new LeanMapperSchemaGenerator($this->mapper);
         $platform = new MySqlPlatform;
-        $schema = $generator->createSchema($entities);
+        $schema = $generator->createSchema($entities, $this->options);
 
         if (file_exists($this->logFile)) {
             $fromSchema = unserialize(file_get_contents($this->logFile));

@@ -1,0 +1,4 @@
+Migration:
+  options:
+    collate: 'utf8_general_ci'
+
