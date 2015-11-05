@@ -11,8 +11,3 @@ LeanMapper:
 
   namespace: UnitTests
 
-  packages:
-    Tables:
-      - language
-      - translation
-

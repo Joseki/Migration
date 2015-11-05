@@ -26,7 +26,7 @@
         "tharos/leanmapper": "~2.0"
     },
     "require-dev": {
-        "joseki/leanmapper-extension": "@dev",
+        "joseki/leanmapper-extension": "~1.3",
         "nette/bootstrap": "~2.2",
         "nette/tester": "~1.0",
         "mockery/mockery": "~0.9"
