@@ -117,9 +117,11 @@ class Manager extends Object
 
         try {
             foreach($migrations as $version => $migration){
-                $this->onEvent("Migrating to {$migration->getVersion()}");
+                $name = $migration->getName();
+                $date = (new \DateTime())->setTimestamp($version)->format('Y-m-d H:i:s');
+                $this->onEvent("Migrating to $version ($date): $name");
                 $this->repository->migrate($migration);
-                $this->onEvent("Migrating to {$migration->getVersion()} succeed");
+                $this->onEvent("SUCCESS" . PHP_EOL);
             }
         } catch (\Exception $e) {
             $this->onEvent('An error occurred during migration. See log for more info.');//todo
