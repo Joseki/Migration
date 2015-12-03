@@ -64,7 +64,7 @@ class Manager extends Object
     {
         $generator = new MigrationClassGenerator($name, $this->migrationPrefix);
         $generator->setQueries($sqlStatements);
-        $generator->saveToDirectory($this->migrationDir);
+        return $generator->saveToDirectory($this->migrationDir);
     }
 
 

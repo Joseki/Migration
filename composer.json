@@ -15,6 +15,7 @@
         "dg/dibi": "~2.0",
         "doctrine/dbal": "2.4.2",
         "joseki/console": "~0.1",
+        "joseki/utils": "~1.0",
         "nette/di": "~2.2",
         "nette/finder": "~2.2",
         "nette/php-generator": ">=2.3.4",

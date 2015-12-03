@@ -3,6 +3,7 @@
 namespace Joseki\Migration\Generator;
 
 use Joseki\Migration\Helper;
+use Joseki\Utils\FileSystem;
 use Nette\PhpGenerator\PhpFile;
 
 class MigrationClassGenerator
@@ -79,8 +80,9 @@ class MigrationClassGenerator
     {
         $dir = rtrim($path, '/');
         @mkdir($dir, 0755, true);
-        $filename = $this->getFullName() . '.php';
-        file_put_contents($dir . '/' . $filename, $this->__toString());
+        $filename = FileSystem::normalizePath($dir . '/' . $this->getFullName() . '.php');
+        file_put_contents($filename, $this->__toString());
+        return $filename;
     }
 
 

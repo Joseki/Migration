@@ -5,6 +5,7 @@ namespace Joseki\Migration\Console\Command;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Joseki\Migration\Manager;
 use Joseki\Migration\Generator\LeanMapperSchemaGenerator;
+use Joseki\Utils\FileSystem;
 use LeanMapper\IMapper;
 use Nette\DI\Container;
 use Symfony\Component\Console\Command\Command;
@@ -44,7 +45,7 @@ class Schema extends Command
         parent::__construct();
         $this->container = $container;
         $this->mapper = $mapper;
-        $this->logFile = $logFile;
+        $this->logFile = FileSystem::normalizePath($logFile);
         $this->manager = $manager;
         $this->options = $options;
     }
@@ -106,7 +107,8 @@ class Schema extends Command
                 $output->writeln($this->logFile . ' updated');
 
                 $name = $input->getArgument('name');
-                $this->manager->createFromLeanMapper($sqlStatements, $name);
+                $migration = $this->manager->createFromLeanMapper($sqlStatements, $name);
+                $output->writeln($migration . ' created');
             }
 
         } else {
