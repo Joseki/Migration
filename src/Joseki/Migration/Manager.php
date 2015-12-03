@@ -127,6 +127,5 @@ class Manager extends Object
             $this->onEvent('An error occurred during migration. See log for more info.');//todo
             throw $e;
         }
-        $this->onEvent('Migration completed');
     }
 }
