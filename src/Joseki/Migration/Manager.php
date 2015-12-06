@@ -116,7 +116,8 @@ class Manager extends Object
         }
 
         try {
-            foreach($migrations as $version => $migration){
+            foreach($migrations as $migration){
+                $version = $migration->getVersion();
                 $name = $migration->getName();
                 $date = (new \DateTime())->setTimestamp($version)->format('Y-m-d H:i:s');
                 $this->onEvent("Migrating to $version ($date): $name");
