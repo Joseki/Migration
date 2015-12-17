@@ -49,8 +49,11 @@ abstract class AbstractMigration
 
     public function getName()
     {
-        $class = '_' . get_class($this);
-        return substr($class,  strrpos($class, '_') + 1);
+        $class = '\\' . get_class($this);
+        $class = substr($class, strrpos($class, '\\') + 1);
+        $version = (string)$this->getVersion();
+        $snakeName = substr($class,  strpos($class, $version) + strlen($version) + 1);
+        return str_replace('_', ' ', $snakeName);
     }
 
 }
