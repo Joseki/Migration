@@ -35,7 +35,6 @@ class LeanMapperSchemaGenerator
 
     public function createSchema(array $entities, array $config = array())
     {
-
         $config = array_merge($this->defaultConfig, $config);
 
         $schema = new Schema();
@@ -60,7 +59,12 @@ class LeanMapperSchemaGenerator
 
             foreach ($properties as $property) {
                 /** @var Property $property */
-                if (!$property->hasRelationship() && !$property->hasCustomFlag('baked')) {
+
+                if ($this->isIgnored($property)) {
+                    continue;
+                }
+
+                if (!$property->hasRelationship()) {
                     $type = $this->getType($property);
 
                     if ($type === null) {
@@ -266,6 +270,13 @@ class LeanMapperSchemaGenerator
         $entity = new $class;
         $primaryKey = $this->mapper->getPrimaryKey($table);
         return $entity->getReflection($this->mapper)->getEntityProperty($primaryKey);
+    }
+
+
+
+    private function isIgnored(Property $property)
+    {
+        return $property->hasCustomFlag('baked') || $property->hasCustomFlag('ignore') || $property->hasCustomFlag('ignored');
     }
 
 }
