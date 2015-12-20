@@ -5,10 +5,11 @@ namespace Joseki\Migration\Generator;
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Types\Type;
+use Joseki\Migration\Generator\DBAL\Types\LongTextType;
+use Joseki\Migration\Generator\DBAL\Types\TimestampType;
 use LeanMapper\Entity;
 use LeanMapper\Exception;
 use LeanMapper\IMapper;
-use Joseki\Migration\Generator\DBAL\Types\LongTextType;
 use LeanMapper\Reflection\Property;
 use LeanMapper\Relationship\HasMany;
 use LeanMapper\Relationship\HasOne;
@@ -39,6 +40,7 @@ class LeanMapperSchemaGenerator
 
         $schema = new Schema();
         Type::addType(LongTextType::LONG_TEXT, '\Joseki\Migration\Generator\DBAL\Types\LongTextType');
+        Type::addType(TimestampType::TIMESTAMP, '\Joseki\Migration\Generator\DBAL\Types\TimestampType');
 
         $createdTables = array();
         /** @var \LeanMapper\Entity $entity */
@@ -228,12 +230,12 @@ class LeanMapperSchemaGenerator
 
         } else {
             // Objects
-            $class = new \ReflectionClass($property->getType());
-            $class = $class->newInstance();
+            $reflectionClass = new \ReflectionClass($property->getType());
+            $object = $reflectionClass->newInstance();
 
-            if ($class instanceof \DateTime) {
-                if ($property->hasCustomFlag('format')) {
-                    $type = $property->getCustomFlagValue('format');
+            if ($object instanceof \DateTime) {
+                if ($property->hasCustomFlag('type')) {
+                    $type = $property->getCustomFlagValue('type');
                 } else {
                     $type = 'datetime';
                 }

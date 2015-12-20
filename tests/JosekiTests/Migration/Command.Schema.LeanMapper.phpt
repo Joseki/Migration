@@ -63,7 +63,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testHasOne()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -87,7 +87,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testEncoding()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
         $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon', $configurator::NONE);
 
         /** @var \Nette\DI\Container $container */
@@ -105,6 +105,31 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
         $commandTester->execute(['command' => $command->getName(), 'name' => 'Foo', '--print' => true]);
 
         Assert::matchFile(__DIR__ . '/files/Command.Schema.LeanMapper.3.expect', $commandTester->getDisplay());
+    }
+
+
+
+    public function testDateTimeTypes()
+    {
+        $configurator = $this->prepareConfigurator();
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon', $configurator::NONE);
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        /** @var Schema $command */
+        $command = $container->getByType('Joseki\Migration\Console\Command\Schema');
+        Assert::true($command instanceof Schema);
+
+        $application = new Application();
+        $application->add($command);
+
+        $command = $application->find('joseki:migration:from-lm');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['command' => $command->getName(), 'name' => 'Foo', '--print' => true]);
+
+        Assert::matchFile(__DIR__ . '/files/Command.Schema.LeanMapper.4.expect', $commandTester->getDisplay());
     }
 }
 

@@ -10,4 +10,5 @@ LeanMapper:
     database: %db.database%
 
   namespace: UnitTests
+  scanDirs: '%appDir%/files/Tables'
 
