@@ -97,4 +97,15 @@ class Repository
         }
         return $this->hasSchemaTable;
     }
+
+
+
+    public function getExistingVersions()
+    {
+        if (!$this->hasSchemaTable()) {
+            $this->getAdapter()->createSchemaTable();
+            $this->hasSchemaTable = true;
+        }
+        return $this->getAdapter()->getExistingVersions();
+    }
 }

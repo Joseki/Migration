@@ -23,4 +23,11 @@ class MysqlAdapter extends Adapter
     {
         $this->connection->query(['CREATE TABLE %n (%n bigint(14) NOT NULL, %n timestamp NOT NULL)', $this->table, 'version', 'executed']);
     }
+
+
+
+    public function getExistingVersions()
+    {
+        return array_keys($this->connection->query(['SELECT * FROM TABLE %n', $this->table])->fetchAssoc('version'));
+    }
 }

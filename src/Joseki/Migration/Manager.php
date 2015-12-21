@@ -71,6 +71,7 @@ class Manager extends Object
 
     public function migrate()
     {
+        $this->validateExistingMigrations();
         $currentVersion = $this->repository->getCurrentVersion();
 
         ksort($this->migrations);
@@ -88,6 +89,7 @@ class Manager extends Object
 
     public function migrateToDateTime(\DateTime $date)
     {
+        $this->validateExistingMigrations();
         $currentVersion = $this->repository->getCurrentVersion();
         $time = $date->getTimestamp();
 
@@ -102,6 +104,36 @@ class Manager extends Object
         $this->applyMigrations($migrations);
     }
 
+
+
+    private function validateExistingMigrations()
+    {
+        $versions = [];
+        /** @var AbstractMigration $migration */
+        foreach ($this->migrations as $migration) {
+            $versions[] = $migration->getVersion();
+        }
+
+        $existingVersions = $this->repository->getExistingVersions();
+
+        sort($existingVersions);
+        sort($versions);
+
+        while (count($existingVersions)) {
+            $e = array_shift($existingVersions);
+            if (count($versions) === 0) {
+                $message = sprintf('Migration %s is registered in database but migration file is missing', $e);
+                $this->onEvent($message);
+                throw new InvalidStateException($message);
+            }
+            $v = array_shift($versions);
+            if ($e != $v) {
+                $message = sprintf('Migration %s has been skipped. Rename this migration (change timestamp in its name and filename to later value)', $v);
+                $this->onEvent($message);
+                throw new InvalidStateException($message);
+            }
+        }
+    }
 
 
     /**
@@ -125,7 +157,7 @@ class Manager extends Object
                 $this->onEvent("SUCCESS" . PHP_EOL);
             }
         } catch (\Exception $e) {
-            $this->onEvent('An error occurred during migration. See log for more info.');//todo
+            $this->onEvent('An error occurred during migration. See log for more info.');
             throw $e;
         }
     }

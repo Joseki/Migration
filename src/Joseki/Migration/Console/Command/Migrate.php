@@ -52,11 +52,18 @@ class Migrate extends Command
 
         // run the migrations
         $start = microtime(true);
-        if (null !== $date) {
-            $this->manager->migrateToDateTime(new \DateTime($date));
-        } else {
-            $this->manager->migrate();
+        
+        try {
+            if (null !== $date) {
+                $this->manager->migrateToDateTime(new \DateTime($date));
+            } else {
+                $this->manager->migrate();
+            }
+        } catch (\Exception $e) {
+            $output->writeln('<comment>Migration has been cancelled</comment>');
+            return;
         }
+
         $end = microtime(true);
 
         $output->writeln('');

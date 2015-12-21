@@ -23,4 +23,8 @@ interface IAdapter
 
 
     public function log(AbstractMigration $migration, $timestamp);
+
+
+
+    public function getExistingVersions();
 }
