@@ -4,9 +4,12 @@ namespace Joseki\Migration\Generator;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Types\DateTimeType;
+use Doctrine\DBAL\Types\TextType;
 use Doctrine\DBAL\Types\Type;
 use Joseki\Migration\Generator\DBAL\Types\LongTextType;
 use Joseki\Migration\Generator\DBAL\Types\TimestampType;
+use Joseki\Migration\InvalidArgumentException;
 use LeanMapper\Entity;
 use LeanMapper\Exception;
 use LeanMapper\IMapper;
@@ -93,8 +96,17 @@ class LeanMapperSchemaGenerator
                         $column->setAutoincrement(true);
                     }
 
-                    if ($property->hasCustomFlag('size')) {
+                    if ($type == 'string' && $property->hasCustomFlag('size')) {
                         $column->setLength($property->getCustomFlagValue('size'));
+                    }
+
+                    if ($type == TimestampType::TIMESTAMP) {
+                        $flagArgs = explode(':', strtolower($property->getCustomFlagValue('type')));
+                        if (count($flagArgs) > 1 && $flagArgs[1] == 'true') {
+                            $column->setColumnDefinition('TIMESTAMP NOT NULL ON UPDATE CURRENT_TIMESTAMP');
+                        } else {
+                            $column->setColumnDefinition('TIMESTAMP NOT NULL');
+                        }
                     }
                 } else {
                     $relationship = $property->getRelationship();
@@ -239,7 +251,17 @@ class LeanMapperSchemaGenerator
 
             if ($object instanceof \DateTime) {
                 if ($property->hasCustomFlag('type')) {
-                    $type = $property->getCustomFlagValue('type');
+                    $types = explode(':', strtolower($property->getCustomFlagValue('type')));
+                    switch ($types[0]) {
+                        case 'date':
+                        case 'datetime':
+                        case 'timestamp':
+                            $type = $types[0];
+                            break;
+                        default:
+                            throw new InvalidArgumentException(sprintf('DateTime property does not accept custom flag m:type(%s)', $types[0]));
+                            break;
+                    }
                 } else {
                     $type = 'datetime';
                 }

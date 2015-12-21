@@ -10,6 +10,8 @@ class TimestampType extends Type
 {
     const TIMESTAMP = 'timestamp';
 
+    private $onUpdate = '';
+
 
 
     /**
@@ -58,6 +60,16 @@ class TimestampType extends Type
         }
 
         return $val;
+    }
+
+
+
+    /**
+     * @param bool $param
+     */
+    public function enableOnUpdate($param)
+    {
+        $this->onUpdate = (bool) $param ? ' ON UPDATE CURRENT_TIMESTAMP' : '';
     }
 
 }
