@@ -125,14 +125,14 @@ class LeanMapperSchemaGenerator
                                 $table,
                                 [$relationship->getColumnReferencingSourceTable()],
                                 [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
-                                array('onDelete' => 'CASCADE')
+                                array('onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE')
                             );
 
                             $relationshipTable->addForeignKeyConstraint(
                                 $relationship->getTargetTable(),
                                 [$relationship->getColumnReferencingTargetTable()],
                                 [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
-                                array('onDelete' => 'CASCADE')
+                                array('onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE')
                             );
 
                             $sourceColumnProperty = $this->getRelationshipColumnProperty($tableName);
@@ -163,7 +163,7 @@ class LeanMapperSchemaGenerator
                                 $relationship->getTargetTable(),
                                 [$column->getName()],
                                 [$this->mapper->getPrimaryKey($relationship->getTargetTable())],
-                                array('onDelete' => $cascade)
+                                array('onDelete' => $cascade, 'onUpdate' => $cascade)
                             );
                         }
                     }

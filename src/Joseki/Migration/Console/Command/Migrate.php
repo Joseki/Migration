@@ -52,7 +52,7 @@ class Migrate extends Command
 
         // run the migrations
         $start = microtime(true);
-        
+
         try {
             if (null !== $date) {
                 $this->manager->migrateToDateTime(new \DateTime($date));
@@ -61,6 +61,9 @@ class Migrate extends Command
             }
         } catch (\Exception $e) {
             $output->writeln('<comment>Migration has been cancelled</comment>');
+            if (class_exists('')) {
+
+            }
             return;
         }
 
