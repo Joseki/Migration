@@ -163,7 +163,7 @@ class LeanMapperSchemaGenerator
                                 $relationship->getTargetTable(),
                                 [$column->getName()],
                                 [$this->mapper->getPrimaryKey($relationship->getTargetTable())],
-                                array('onDelete' => $cascade, 'onUpdate' => $cascade)
+                                array('onDelete' => $cascade, 'onUpdate' => 'CASCADE')
                             );
                         }
                     }
