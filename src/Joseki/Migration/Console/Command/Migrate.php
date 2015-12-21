@@ -60,10 +60,8 @@ class Migrate extends Command
                 $this->manager->migrate();
             }
         } catch (\Exception $e) {
-            $output->writeln('<comment>Migration has been cancelled</comment>');
-            if (class_exists('')) {
-
-            }
+            $output->writeln('<comment>Migration has been cancelled due to the following error:</comment>');
+            $output->writeln('<comment>' . $e->getMessage() .'</comment>');
             return;
         }
 

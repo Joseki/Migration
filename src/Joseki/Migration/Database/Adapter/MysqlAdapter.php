@@ -28,6 +28,6 @@ class MysqlAdapter extends Adapter
 
     public function getExistingVersions()
     {
-        return array_keys($this->connection->query(['SELECT * FROM TABLE %n', $this->table])->fetchAssoc('version'));
+        return array_keys($this->connection->query(['SELECT * FROM %n', $this->table])->fetchAssoc('version'));
     }
 }
