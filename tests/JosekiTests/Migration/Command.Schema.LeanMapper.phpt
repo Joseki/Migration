@@ -2,7 +2,6 @@
 
 namespace JosekiTests\Migration;
 
-use Joseki\Migration\Console\Command\Create;
 use Joseki\Migration\Console\Command\Schema;
 use Joseki\Migration\DI\MigrationExtension;
 use Nette\Configurator;
@@ -19,6 +18,13 @@ require_once __DIR__ . '/../bootstrap.php';
  */
 class CommandSchemaLeanMapper extends \Tester\TestCase
 {
+
+    public function setUp()
+    {
+        \Tester\Environment::lock('database', TEMP_DIR . '/../');
+    }
+
+
 
     private function prepareConfigurator()
     {

@@ -4,6 +4,7 @@ namespace Joseki\Migration\Database;
 
 use Joseki\Migration\AbstractMigration;
 use Joseki\Migration\Database\Adapters\IAdapter;
+use Tester\Assert;
 
 class Repository
 {
@@ -11,7 +12,7 @@ class Repository
     /** @var IAdapter */
     private $adapter;
 
-    /** @var \DibiConnection */
+    /** @var \Dibi\Connection */
     private $connection;
 
     /** @var  string */
@@ -26,9 +27,9 @@ class Repository
     /**
      * Repository constructor.
      * @param $table
-     * @param \DibiConnection $connection
+     * @param \Dibi\Connection $connection
      */
-    public function __construct($table, \DibiConnection $connection)
+    public function __construct($table, \Dibi\Connection $connection)
     {
         $this->connection = $connection;
         $this->table = $table;
@@ -75,9 +76,13 @@ class Repository
     {
         if (!$this->adapter) {
             $driver = ucfirst(strtolower($this->connection->getConfig('driver')));
-            switch ($this->connection->getConfig($driver)) {
+            switch ($driver) {
                 case IAdapter::DRIVER_MYSQL:
+                case IAdapter::DRIVER_MYSQLI:
                     $class = 'Joseki\Migration\Database\Adapters\MysqlAdapter';
+                    break;
+                case IAdapter::DRIVER_SQLSRV:
+                    $class = 'Joseki\Migration\Database\Adapters\SqlsrvAdapter';
                     break;
                 default: // fallback
                     $class = self::$defaultAdapter;

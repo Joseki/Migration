@@ -6,7 +6,7 @@ use Joseki\Migration\AbstractMigration;
 
 abstract class Adapter implements IAdapter
 {
-    /** @var \DibiConnection */
+    /** @var \Dibi\Connection */
     protected $connection;
 
     protected $table;
@@ -15,10 +15,10 @@ abstract class Adapter implements IAdapter
 
     /**
      * Repository constructor.
-     * @param \DibiConnection $connection
+     * @param \Dibi\Connection $connection
      * @param $table
      */
-    public function __construct(\DibiConnection $connection, $table)
+    public function __construct(\Dibi\Connection $connection, $table)
     {
         $this->connection = $connection;
         $this->table = $table;
