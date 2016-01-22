@@ -75,6 +75,25 @@ class MigrationExtension extends CompilerExtension
 
 
 
+    public function afterCompile(\Nette\PhpGenerator\ClassType $class)
+    {
+        $initialize = $class->methods['initialize'];
+        $container = $this->getContainerBuilder();
+
+        $repositoryDefinitions = $container->findByType('LeanMapper\Repository');
+
+        foreach ($repositoryDefinitions as $serviceDefinition) {
+            $class = $serviceDefinition->getClass();
+            $initialize->addBody(
+                '$this->getService(?)->addRepository($this->getByType(?));',
+                array($this->prefix('command.schema'), $class)
+            );
+        }
+
+    }
+
+
+
     /**
      * @param string $class
      * @return NULL|string

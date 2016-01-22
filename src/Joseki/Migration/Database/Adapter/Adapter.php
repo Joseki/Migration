@@ -2,33 +2,37 @@
 
 namespace Joseki\Migration\Database\Adapters;
 
+use Dibi\Connection;
 use Joseki\Migration\AbstractMigration;
+use Joseki\Migration\Database\Repository;
 
 abstract class Adapter implements IAdapter
 {
     /** @var \Dibi\Connection */
     protected $connection;
 
-    protected $table;
+    /** @var Repository */
+    private $repository;
 
 
 
     /**
      * Repository constructor.
      * @param \Dibi\Connection $connection
-     * @param $table
+     * @param Repository $repository
+     * @internal param $table
      */
-    public function __construct(\Dibi\Connection $connection, $table)
+    public function __construct(\Dibi\Connection $connection, Repository $repository)
     {
         $this->connection = $connection;
-        $this->table = $table;
+        $this->repository = $repository;
     }
 
 
 
     public function getCurrentVersion()
     {
-        $version = $this->connection->select('%n', 'version')->from('%n', $this->table)->orderBy('%n DESC', 'version')->fetchSingle();
+        $version = $this->connection->select('%n', 'version')->from('%n', $this->getTable())->orderBy('%n DESC', 'version')->fetchSingle();
         return $version ? (int)$version : 0;
     }
 
@@ -37,6 +41,13 @@ abstract class Adapter implements IAdapter
     public function log(AbstractMigration $migration, $timestamp)
     {
         $datetime = new \DateTime();
-        $this->connection->insert($this->table, ['version' => $migration->getVersion(), 'executed' => $datetime->setTimestamp($timestamp)])->execute();
+        $this->connection->insert($this->getTable(), ['version' => $migration->getVersion(), 'executed' => $datetime->setTimestamp($timestamp)])->execute();
+    }
+
+
+
+    public function getTable()
+    {
+        return $this->repository->getTable();
     }
 }

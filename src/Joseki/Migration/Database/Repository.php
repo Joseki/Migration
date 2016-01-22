@@ -3,8 +3,8 @@
 namespace Joseki\Migration\Database;
 
 use Joseki\Migration\AbstractMigration;
+use Joseki\Migration\Database\Adapters\Adapter;
 use Joseki\Migration\Database\Adapters\IAdapter;
-use Tester\Assert;
 
 class Repository
 {
@@ -88,7 +88,7 @@ class Repository
                     $class = self::$defaultAdapter;
                     break;
             }
-            $this->adapter = new $class($this->connection, $this->table);
+            $this->adapter = new $class($this->connection, $this);
         }
         return $this->adapter;
     }
@@ -112,5 +112,15 @@ class Repository
             $this->hasSchemaTable = true;
         }
         return $this->getAdapter()->getExistingVersions();
+    }
+
+
+
+    /**
+     * @return string
+     */
+    public function getTable()
+    {
+        return $this->table;
     }
 }

@@ -3,6 +3,9 @@
 namespace Joseki\Migration\Console\Command;
 
 use Doctrine\DBAL\Platforms\MySqlPlatform;
+use Doctrine\DBAL\Platforms\SQLServerPlatform;
+use Joseki\Migration\Database\Adapters\SqlsrvAdapter;
+use Joseki\Migration\Database\Repository;
 use Joseki\Migration\Manager;
 use Joseki\Migration\Generator\LeanMapperSchemaGenerator;
 use Joseki\Utils\FileSystem;
@@ -20,9 +23,6 @@ class Schema extends Command
     /** @var Manager */
     private $manager;
 
-    /** @var Container */
-    private $container;
-
     /** @var IMapper */
     private $mapper;
 
@@ -31,23 +31,38 @@ class Schema extends Command
     /** @var array */
     private $options;
 
+    /** @var Repository */
+    private $repository;
+
+    private $entities;
+
 
 
     /**
      * @param null|string $logFile
      * @param array $options
      * @param Manager $manager
-     * @param Container $container
+     * @param Repository $repository
      * @param IMapper $mapper
      */
-    function __construct($logFile, array $options = array(), Manager $manager, Container $container, IMapper $mapper)
+    function __construct($logFile, array $options = array(), Manager $manager, Repository $repository, IMapper $mapper)
     {
         parent::__construct();
-        $this->container = $container;
         $this->mapper = $mapper;
         $this->logFile = FileSystem::normalizePath($logFile);
         $this->manager = $manager;
         $this->options = $options;
+        $this->repository = $repository;
+    }
+
+
+
+    public function addRepository(\Joseki\LeanMapper\Repository $repository)
+    {
+        $class = get_class($repository);
+        $table = $this->mapper->getTableByRepositoryClass($class);
+        $entity = $this->mapper->getEntityClass($table);
+        $this->entities[] = new $entity;
     }
 
 
@@ -63,29 +78,16 @@ class Schema extends Command
 
 
 
-    protected function getEntities()
-    {
-        $repositoryServices = $this->container->findByType('LeanMapper\Repository');
-
-        $entities = [];
-        foreach ($repositoryServices as $service) {
-            $repository = $this->container->getService($service);
-            $class = get_class($repository);
-            $table = $this->mapper->getTableByRepositoryClass($class);
-            $entity = $this->mapper->getEntityClass($table);
-            $entities[] = new $entity;
-        }
-
-        return $entities;
-    }
-
-
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $entities = $this->getEntities();
+        $entities = $this->entities;
         $generator = new LeanMapperSchemaGenerator($this->mapper);
-        $platform = new MySqlPlatform;
+        $adapter = $this->repository->getAdapter();
+        if ($adapter instanceof SqlsrvAdapter) {
+            $platform = new SQLServerPlatform();
+        } else {
+            $platform = new MySqlPlatform;
+        }
         $schema = $generator->createSchema($entities, $this->options);
 
         if (file_exists($this->logFile)) {
