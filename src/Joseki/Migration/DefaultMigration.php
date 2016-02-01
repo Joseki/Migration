@@ -2,18 +2,20 @@
 
 namespace Joseki\Migration;
 
+use Dibi\Connection;
+
 class DefaultMigration extends AbstractMigration
 {
-    /** @var \DibiConnection */
+    /** @var Connection */
     private $dibiConnection;
 
 
 
     /**
      * DefaultMigration constructor.
-     * @param \DibiConnection $dibiConnection
+     * @param Connection $dibiConnection
      */
-    public function __construct(\DibiConnection $dibiConnection)
+    public function __construct(Connection $dibiConnection)
     {
         $this->dibiConnection = $dibiConnection;
     }
