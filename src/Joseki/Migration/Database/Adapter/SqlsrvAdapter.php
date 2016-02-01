@@ -12,7 +12,7 @@ class SqlsrvAdapter extends Adapter
             ->from('%n.%n', 'INFORMATION_SCHEMA', 'TABLES')
             ->where('%n = %s', 'TABLE_SCHEMA', $database)
             ->where('%n = %s', 'TABLE_NAME', $this->table)
-//            ->orderBy('%n', 'TABLE_NAME')
+            ->orderBy('%n', 'TABLE_NAME')
             ->fetch();
 
         return $row !== false;
