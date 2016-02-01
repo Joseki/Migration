@@ -2,8 +2,6 @@
 
 namespace JosekiTests\Migration;
 
-use Joseki\Migration\Database\Adapters\MysqlAdapter;
-use Joseki\Migration\Database\Adapters\SqlsrvAdapter;
 use Joseki\Migration\Database\Repository;
 use Joseki\Migration\DefaultMigration;
 use Mockery as m;
@@ -19,9 +17,6 @@ class Migration_1443096982_Repository2 extends DefaultMigration
 {
 }
 
-/**
- * @testCase
- */
 class RepositoryTest extends \Tester\TestCase
 {
 
@@ -40,22 +35,6 @@ class RepositoryTest extends \Tester\TestCase
         Assert::equal(1443096982, $repository->getCurrentVersion());
 
         Assert::true(true);
-    }
-
-
-
-    public function testAdapter()
-    {
-        $config = ['username' => 'root', 'password' => '', 'host' => '127.0.0.1', 'database' => 'testing', 'lazy' => true];
-
-        $mysqlConnection = new \Dibi\Connection($config);
-        $repository = new Repository('foo', $mysqlConnection);
-        Assert::true($repository->getAdapter() instanceof MysqlAdapter);
-
-        $config['driver'] = 'sqlsrv';
-        $sqlsrvConnection = new \Dibi\Connection($config);
-        $repository = new Repository('foo', $sqlsrvConnection);
-        Assert::true($repository->getAdapter() instanceof SqlsrvAdapter);
     }
 
 }

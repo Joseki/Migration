@@ -42,6 +42,16 @@ $_SERVER = array_intersect_key(
 $_SERVER['REQUEST_TIME'] = 1234567890;
 $_ENV = $_GET = $_POST = array();
 
+
+// load connection
+try {
+    $config = \Tester\Environment::loadData();
+} catch (\Exception $e) {
+    $config = parse_ini_file(__DIR__ . '/Migration/config/databases.ini', TRUE);
+    $config = reset($config);
+}
+$config['lazy'] = true;
+
 if (extension_loaded('xdebug')) {
     xdebug_disable();
     Tester\CodeCoverage\Collector::start(__DIR__ . '/coverage.dat');

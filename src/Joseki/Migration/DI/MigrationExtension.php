@@ -2,6 +2,7 @@
 
 namespace Joseki\Migration\DI;
 
+use Joseki\Utils\FileSystem;
 use Nette\Caching\Storages\MemoryStorage;
 use Nette\DI\CompilerExtension;
 use Nette\Loaders\RobotLoader;
@@ -33,7 +34,7 @@ class MigrationExtension extends CompilerExtension
         Validators::assert($config['options'], 'array', 'Generated SQL options');
 
         if (!$config['logFile']) {
-            $config['logFile'] = rtrim($config['migrationDir'], "/") . '/_schema.txt';
+            $config['logFile'] = FileSystem::normalizePath(sprintf('%s/_schema.txt', $config['migrationDir']));
         }
 
         $container->addDefinition($this->prefix('repository'))
@@ -57,6 +58,9 @@ class MigrationExtension extends CompilerExtension
             ->addTag(self::TAG_JOSEKI_COMMAND)
             ->addTag(self::TAG_KDYBY_COMMAND);
 
+        $container->addDefinition($this->prefix('platform'))
+            ->setClass('Doctrine\DBAL\Platforms\MySqlPlatform');
+
         foreach ($this->getFiles($config['migrationDir']) as $index => $class) {
             if (!$class = $this->resolveRealClassName($class)) {
                 continue;
@@ -70,6 +74,21 @@ class MigrationExtension extends CompilerExtension
                 ->setAutowired(false);
 
             $manager->addSetup('add', ['@' . $name]);
+        }
+    }
+
+
+
+    public function beforeCompile()
+    {
+        $container = $this->getContainerBuilder();
+
+        $repositoryDefinitions = $container->findByType('LeanMapper\Repository');
+        $schemaCommandDefinition = $container->getDefinition($this->prefix('command.schema'));
+
+        foreach ($repositoryDefinitions as $serviceDefinition) {
+            $class = $serviceDefinition->getClass();
+            $schemaCommandDefinition->addSetup('addRepository', array(sprintf('@%s', $class)));
         }
     }
 
