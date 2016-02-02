@@ -18,11 +18,11 @@ class RepositoryAdapterTest extends \Tester\TestCase
 
     public function testAdapter()
     {
-        if (!extension_loaded('sqlsrv')) {
+        global $config;
+        if ($config['driver'] === 'sqlsrv' && !extension_loaded('sqlsrv')) {
             Environment::skip('sqlsrv not loaded');
         }
 
-        global $config;
         $connection = new \Dibi\Connection($config);
         $repository = new Repository('foo', $connection);
         Assert::equal(get_class($repository->getAdapter()), sprintf('Joseki\Migration\Database\Adapters\%sAdapter', $config['system']));
