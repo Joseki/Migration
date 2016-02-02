@@ -44,7 +44,7 @@ class MigrationExtension extends CompilerExtension
             ->setClass('Joseki\Migration\Manager', [$config['migrationDir'], $config['migrationPrefix']]);
 
         $container->addDefinition($this->prefix('command.schema'))
-            ->setClass('Joseki\Migration\Console\Command\Schema', [$config['logFile'], $config['options']])
+            ->setClass('Joseki\Migration\Console\Command\Schema', [$config['logFile']])
             ->addTag(self::TAG_JOSEKI_COMMAND)
             ->addTag(self::TAG_KDYBY_COMMAND);
 
@@ -60,6 +60,9 @@ class MigrationExtension extends CompilerExtension
 
         $container->addDefinition($this->prefix('platform'))
             ->setClass('Doctrine\DBAL\Platforms\MySqlPlatform');
+
+        $container->addDefinition($this->prefix('generator.lm'))
+            ->setClass('Joseki\Migration\Generator\LeanMapperSchemaGenerator', [$config['options']]);
 
         foreach ($this->getFiles($config['migrationDir']) as $index => $class) {
             if (!$class = $this->resolveRealClassName($class)) {

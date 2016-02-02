@@ -46,6 +46,7 @@ Migration:
   logFile:                          # OPTIONAL
   options:                          # OPTIONAL
     collate: 'utf8_unicode_ci'      # OPTIONAL (DEFAULT VALUE)
+    cascading: true                 # OPTIONAL (DEFAULT VALUE)
 ```
 
 Running a console command

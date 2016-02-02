@@ -27,31 +27,31 @@ class Schema extends Command
     private $logFile;
 
     /** @var array */
-    private $options;
-
-    /** @var array */
     private $entities;
 
     /** @var AbstractPlatform */
     private $platform;
 
+    /** @var LeanMapperSchemaGenerator */
+    private $schemaGenerator;
+
 
 
     /**
      * @param null|string $logFile
-     * @param array $options
      * @param Manager $manager
      * @param IMapper $mapper
      * @param AbstractPlatform $platform
+     * @param LeanMapperSchemaGenerator $schemaGenerator
      */
-    function __construct($logFile, array $options = array(), Manager $manager, IMapper $mapper, AbstractPlatform $platform)
+    function __construct($logFile, Manager $manager, IMapper $mapper, AbstractPlatform $platform, LeanMapperSchemaGenerator $schemaGenerator)
     {
         parent::__construct();
         $this->mapper = $mapper;
         $this->logFile = $logFile;
         $this->manager = $manager;
-        $this->options = $options;
         $this->platform = $platform;
+        $this->schemaGenerator = $schemaGenerator;
     }
 
 
@@ -79,8 +79,7 @@ class Schema extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $generator = new LeanMapperSchemaGenerator($this->mapper);
-        $schema = $generator->createSchema($this->entities, $this->options);
+        $schema = $this->schemaGenerator->createSchema($this->entities);
 
         if (file_exists($this->logFile)) {
             $fromSchema = unserialize(file_get_contents($this->logFile));

@@ -4,8 +4,6 @@ namespace Joseki\Migration\Generator;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\DateTimeType;
-use Doctrine\DBAL\Types\TextType;
 use Doctrine\DBAL\Types\Type;
 use Joseki\Migration\Generator\DBAL\Types\LongTextType;
 use Joseki\Migration\Generator\DBAL\Types\TimestampType;
@@ -20,25 +18,36 @@ use LeanMapper\Relationship\HasOne;
 class LeanMapperSchemaGenerator
 {
 
+    /** @var IMapper */
     private $mapper;
 
     private $defaultConfig = array(
         'autoincrement' => 'auto',
         'collate' => 'utf8_unicode_ci',
+        'cascading' => true,
     );
 
+    /** @var array */
+    private $options;
 
 
-    public function __construct(IMapper $mapper)
+
+    /**
+     * LeanMapperSchemaGenerator constructor.
+     * @param array $options
+     * @param IMapper $mapper
+     */
+    public function __construct(array $options, IMapper $mapper)
     {
         $this->mapper = $mapper;
+        $this->options = $options;
     }
 
 
 
-    public function createSchema(array $entities, array $config = array())
+    public function createSchema(array $entities)
     {
-        $config = array_merge($this->defaultConfig, $config);
+        $config = array_merge($this->defaultConfig, $this->options);
 
         $schema = new Schema();
         Type::addType(LongTextType::LONG_TEXT, '\Joseki\Migration\Generator\DBAL\Types\LongTextType');
@@ -121,18 +130,20 @@ class LeanMapperSchemaGenerator
                             $targetTableType = $this->getRelationshipColumnType($relationship->getColumnReferencingTargetTable());
                             $sourceColumn = $relationshipTable->addColumn($relationship->getColumnReferencingSourceTable(), $sourceTableType);
                             $targetColumn = $relationshipTable->addColumn($relationship->getColumnReferencingTargetTable(), $targetTableType);
+                            $cascade = $config['cascading'] ? 'CASCADE' : 'NO ACTION';
+
                             $relationshipTable->addForeignKeyConstraint(
                                 $table,
                                 [$relationship->getColumnReferencingSourceTable()],
                                 [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
-                                array('onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE')
+                                array('onDelete' => $cascade, 'onUpdate' => $cascade)
                             );
 
                             $relationshipTable->addForeignKeyConstraint(
                                 $relationship->getTargetTable(),
                                 [$relationship->getColumnReferencingTargetTable()],
                                 [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
-                                array('onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE')
+                                array('onDelete' => $cascade, 'onUpdate' => $cascade)
                             );
 
                             $sourceColumnProperty = $this->getRelationshipColumnProperty($tableName);
@@ -158,12 +169,13 @@ class LeanMapperSchemaGenerator
                         }
 
                         if (!$property->hasCustomFlag('nofk')) {
-                            $cascade = $property->isNullable() ? 'SET NULL' : 'CASCADE';
+                            $onDeleteCascade = $config['cascading'] ? ($property->isNullable() ? 'SET NULL' : 'CASCADE') : 'NO ACTION';
+                            $onUpdateCascade = $config['cascading'] ? ($property->isNullable() ? 'SET NULL' : 'CASCADE') : 'NO ACTION';
                             $table->addForeignKeyConstraint(
                                 $relationship->getTargetTable(),
                                 [$column->getName()],
                                 [$this->mapper->getPrimaryKey($relationship->getTargetTable())],
-                                array('onDelete' => $cascade, 'onUpdate' => 'CASCADE')
+                                array('onDelete' => $onDeleteCascade, 'onUpdate' => $onUpdateCascade)
                             );
                         }
                     }
