@@ -7,6 +7,7 @@
 
 namespace JosekiTests\Migration;
 
+use Dibi\NotSupportedException;
 use Joseki\Migration\Database\Repository;
 use Tester\Assert;
 
@@ -18,8 +19,13 @@ class RepositoryAdapterTest extends \Tester\TestCase
     public function testAdapter()
     {
         global $config;
-        $mysqlConnection = new \Dibi\Connection($config);
-        $repository = new Repository('foo', $mysqlConnection);
+        try {
+            $connection = new \Dibi\Connection($config);
+        } catch (NotSupportedException $e) {
+
+        }
+
+        $repository = new Repository('foo', $connection);
         Assert::equal(get_class($repository->getAdapter()), sprintf('Joseki\Migration\Database\Adapters\%sAdapter', $config['system']));
     }
 
