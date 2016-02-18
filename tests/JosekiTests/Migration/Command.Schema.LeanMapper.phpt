@@ -162,6 +162,30 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
 
         Assert::matchFile(__DIR__ . '/files/Command.Schema.LeanMapper.5.expect', $commandTester->getDisplay());
     }
+
+
+
+    public function testSchemaAndRelations()
+    {
+        $configurator = $this->prepareConfigurator();
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.4.neon', $configurator::NONE);
+
+        /** @var \Nette\DI\Container $container */
+        $container = $configurator->createContainer();
+
+        /** @var Schema $command */
+        $command = $container->getByType('Joseki\Migration\Console\Command\Schema');
+        Assert::true($command instanceof Schema);
+
+        $application = new Application();
+        $application->add($command);
+
+        $command = $application->find('joseki:migration:from-lm');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(['command' => $command->getName(), 'name' => 'Foo', '--print' => true]);
+
+        Assert::matchFile(__DIR__ . '/files/Command.Schema.LeanMapper.6.expect', $commandTester->getDisplay());
+    }
 }
 
 \run(new CommandSchemaLeanMapper());
