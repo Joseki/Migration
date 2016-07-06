@@ -1,0 +1,25 @@
+<?php
+class Migration_1442930919_Test extends Joseki\Migration\DefaultMigration
+{
+
+	public function beforeMigrate()
+	{
+		parent::beforeMigrate();
+	}
+
+
+	public function migrate()
+	{
+		$this->query([
+			'SELECT 1 FROM DUAL',
+			'SELECT 2 FROM DUAL',
+		]);
+	}
+
+
+	public function afterMigrate()
+	{
+		parent::afterMigrate();
+	}
+
+}
