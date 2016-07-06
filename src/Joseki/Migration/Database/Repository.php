@@ -11,7 +11,7 @@ class Repository
     /** @var IAdapter */
     private $adapter;
 
-    /** @var \DibiConnection */
+    /** @var \Dibi\Connection */
     private $connection;
 
     /** @var  string */
@@ -26,9 +26,9 @@ class Repository
     /**
      * Repository constructor.
      * @param $table
-     * @param \DibiConnection $connection
+     * @param \Dibi\Connection $connection
      */
-    public function __construct($table, \DibiConnection $connection)
+    public function __construct($table, \Dibi\Connection $connection)
     {
         $this->connection = $connection;
         $this->table = $table;
