@@ -35,7 +35,7 @@ class CommandCreateTest extends \Tester\TestCase
         $configurator->onCompile[] = function ($configurator, Compiler $compiler) {
             $compiler->addExtension('Migration', new MigrationExtension());
         };
-        $configurator->addConfig(__DIR__ . '/config/config.create.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.create.neon');
 
         return $configurator;
     }

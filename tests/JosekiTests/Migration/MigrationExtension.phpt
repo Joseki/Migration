@@ -37,7 +37,7 @@ class ExtensionTest extends \Tester\TestCase
     public function testExtensionLoad()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.loader.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.loader.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();

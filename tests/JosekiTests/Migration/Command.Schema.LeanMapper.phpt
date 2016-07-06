@@ -35,7 +35,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
         $configurator->onCompile[] = function ($configurator, Compiler $compiler) {
             $compiler->addExtension('Migration', new MigrationExtension());
         };
-        $configurator->addConfig(__DIR__ . '/config/config.schema.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.schema.neon');
 
         return $configurator;
     }
@@ -45,7 +45,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testHasMany()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -69,7 +69,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testHasOne()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -93,8 +93,8 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testEncoding()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon', $configurator::NONE);
-        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.1.neon');
+        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -118,8 +118,8 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testDateTimeTypes()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon', $configurator::NONE);
-        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.2.neon');
+        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -143,8 +143,8 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testIgnoredProperties()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.3.neon', $configurator::NONE);
-        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.3.neon');
+        $configurator->addConfig(__DIR__ . '/config/config.schema.options.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
@@ -168,7 +168,7 @@ class CommandSchemaLeanMapper extends \Tester\TestCase
     public function testSchemaAndRelations()
     {
         $configurator = $this->prepareConfigurator();
-        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.4.neon', $configurator::NONE);
+        $configurator->addConfig(__DIR__ . '/config/config.leanmapper.4.neon');
 
         /** @var \Nette\DI\Container $container */
         $container = $configurator->createContainer();
