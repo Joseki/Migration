@@ -4,30 +4,25 @@ namespace JosekiTests\Migration;
 
 use Joseki\Migration\Database\Repository;
 use Joseki\Migration\DefaultMigration;
-use Mockery\Mock;
-use Tester\Assert;
 use Mockery as m;
+use Tester\Assert;
 
 require_once __DIR__ . '/../bootstrap.php';
 
 class Migration_1443096980_Repository1 extends DefaultMigration
 {
 }
+
 class Migration_1443096982_Repository2 extends DefaultMigration
 {
 }
 
-/**
- * @testCase
- */
 class RepositoryTest extends \Tester\TestCase
 {
 
-
     public function testMigrate()
     {
-        /** @var \DibiConnection|Mock $connection */
-        $connection = new \DibiConnection(['username' => 'root', 'password' => '', 'host' => '127.0.0.1', 'database' => 'testing']);
+        $connection = new \Dibi\Connection(['username' => 'root', 'password' => '', 'host' => '127.0.0.1', 'database' => 'testing']);
 
         $migration1 = new Migration_1443096980_Repository1($connection);
         $migration2 = new Migration_1443096982_Repository2($connection);

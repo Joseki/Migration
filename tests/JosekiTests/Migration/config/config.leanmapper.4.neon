@@ -1,0 +1,21 @@
+extensions:
+  LeanMapper: Joseki\LeanMapper\DI\Extension
+
+LeanMapper:
+  db:
+    host: %db.host%
+    username: %db.username%
+    password: %db.password%
+    driver: %db.driver%
+    database: %db.database%
+
+  namespace: UnitTests
+  scanDirs: '%appDir%/files/Schema'
+  defaultSchema: dbo
+
+Migration:
+  options:
+    cascading: false
+
+services:
+  Migration.platform: Doctrine\DBAL\Platforms\SQLServerPlatform

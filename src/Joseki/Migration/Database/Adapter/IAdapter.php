@@ -7,6 +7,8 @@ use Joseki\Migration\AbstractMigration;
 interface IAdapter
 {
     const DRIVER_MYSQL = 'Mysql';
+    const DRIVER_MYSQLI = 'Mysqli';
+    const DRIVER_SQLSRV = 'Sqlsrv';
 
 
 

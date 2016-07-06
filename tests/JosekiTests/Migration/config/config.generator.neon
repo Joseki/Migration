@@ -3,4 +3,4 @@ Migration:
 
 services:
   mapper: LeanMapper\DefaultMapper
-  connection: DibiConnection([])
+  connection: Dibi\Connection([])

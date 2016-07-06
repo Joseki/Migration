@@ -5,6 +5,7 @@ parameters:
     database: testing
     username: travis
     password:
+    lazy: true
 
 Migration:
   migrationDir: %appDir%

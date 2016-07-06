@@ -4,8 +4,6 @@ namespace Joseki\Migration\Generator;
 
 use Doctrine\DBAL\Schema\Column;
 use Doctrine\DBAL\Schema\Schema;
-use Doctrine\DBAL\Types\DateTimeType;
-use Doctrine\DBAL\Types\TextType;
 use Doctrine\DBAL\Types\Type;
 use Joseki\Migration\Generator\DBAL\Types\LongTextType;
 use Joseki\Migration\Generator\DBAL\Types\TimestampType;
@@ -20,36 +18,47 @@ use LeanMapper\Relationship\HasOne;
 class LeanMapperSchemaGenerator
 {
 
+    /** @var IMapper */
     private $mapper;
 
-    private $defaultConfig = array(
+    private $defaultConfig = [
         'autoincrement' => 'auto',
         'collate' => 'utf8_unicode_ci',
-    );
+        'cascading' => true,
+    ];
+
+    /** @var array */
+    private $options;
 
 
 
-    public function __construct(IMapper $mapper)
+    /**
+     * LeanMapperSchemaGenerator constructor.
+     * @param array $options
+     * @param IMapper $mapper
+     */
+    public function __construct(array $options, IMapper $mapper)
     {
         $this->mapper = $mapper;
+        $this->options = $options;
     }
 
 
 
-    public function createSchema(array $entities, array $config = array())
+    public function createSchema(array $entities)
     {
-        $config = array_merge($this->defaultConfig, $config);
+        $config = array_merge($this->defaultConfig, $this->options);
 
         $schema = new Schema();
         Type::addType(LongTextType::LONG_TEXT, '\Joseki\Migration\Generator\DBAL\Types\LongTextType');
         Type::addType(TimestampType::TIMESTAMP, '\Joseki\Migration\Generator\DBAL\Types\TimestampType');
 
-        $createdTables = array();
+        $createdTables = [];
         /** @var \LeanMapper\Entity $entity */
         foreach ($entities as $entity) {
             $reflection = $entity->getReflection($this->mapper);
             $properties = $reflection->getEntityProperties();
-            $onEnd = array();
+            $onEnd = [];
 
             if (count($properties) === 0) {
                 continue;
@@ -68,12 +77,13 @@ class LeanMapperSchemaGenerator
                 }
 
                 if (!$property->hasRelationship()) {
+                    if (!$property->isWritable()) {
+                        continue;
+                    }
+
                     $type = $this->getType($property);
 
                     if ($type === null) {
-                        if (!$property->isWritable()) {
-                            continue;
-                        }
                         throw new \Exception('Unknown type');
                     }
 
@@ -117,22 +127,30 @@ class LeanMapperSchemaGenerator
                             $createdTables[] = $relationshipTableName;
                             $relationshipTable = $schema->createTable($relationship->getRelationshipTable());
 
-                            $sourceTableType = $this->getRelationshipColumnType($relationship->getColumnReferencingSourceTable());
-                            $targetTableType = $this->getRelationshipColumnType($relationship->getColumnReferencingTargetTable());
-                            $sourceColumn = $relationshipTable->addColumn($relationship->getColumnReferencingSourceTable(), $sourceTableType);
-                            $targetColumn = $relationshipTable->addColumn($relationship->getColumnReferencingTargetTable(), $targetTableType);
+                            $cascade = $config['cascading'] ? 'CASCADE' : 'NO ACTION';
+
+                            $columnReferencingSourceTable = $relationship->getColumnReferencingSourceTable();
+                            $sourceTableType = $this->getRelationshipColumnType($columnReferencingSourceTable);
+                            $sourceColumn = $relationshipTable->addColumn($columnReferencingSourceTable, $sourceTableType);
+                            $primaryKey1 = $this->mapper->getPrimaryKey($tableName);
+
+                            $columnReferencingTargetTable = $relationship->getColumnReferencingTargetTable();
+                            $targetTableType = $this->getRelationshipColumnType($columnReferencingTargetTable);
+                            $targetColumn = $relationshipTable->addColumn($columnReferencingTargetTable, $targetTableType);
+                            $primaryKey2 = $this->mapper->getPrimaryKey($relationship->getTargetTable());
+                            
                             $relationshipTable->addForeignKeyConstraint(
                                 $table,
-                                [$relationship->getColumnReferencingSourceTable()],
-                                [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
-                                array('onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE')
+                                [$columnReferencingSourceTable],
+                                [$primaryKey1],
+                                ['onDelete' => $cascade, 'onUpdate' => $cascade]
                             );
 
                             $relationshipTable->addForeignKeyConstraint(
                                 $relationship->getTargetTable(),
-                                [$relationship->getColumnReferencingTargetTable()],
-                                [$this->mapper->getPrimaryKey($relationship->getRelationshipTable())],
-                                array('onDelete' => 'CASCADE', 'onUpdate' => 'CASCADE')
+                                [$columnReferencingTargetTable],
+                                [$primaryKey2],
+                                ['onDelete' => $cascade, 'onUpdate' => $cascade]
                             );
 
                             $sourceColumnProperty = $this->getRelationshipColumnProperty($tableName);
@@ -158,24 +176,25 @@ class LeanMapperSchemaGenerator
                         }
 
                         if (!$property->hasCustomFlag('nofk')) {
-                            $cascade = $property->isNullable() ? 'SET NULL' : 'CASCADE';
+                            $onDeleteCascade = $config['cascading'] ? ($property->isNullable() ? 'SET NULL' : 'CASCADE') : 'NO ACTION';
+                            $onUpdateCascade = $config['cascading'] ? ($property->isNullable() ? 'SET NULL' : 'CASCADE') : 'NO ACTION';
                             $table->addForeignKeyConstraint(
                                 $relationship->getTargetTable(),
                                 [$column->getName()],
                                 [$this->mapper->getPrimaryKey($relationship->getTargetTable())],
-                                array('onDelete' => $cascade, 'onUpdate' => 'CASCADE')
+                                ['onDelete' => $onDeleteCascade, 'onUpdate' => $onUpdateCascade]
                             );
                         }
                     }
                 }
 
                 if ($property->hasCustomFlag('unique')) {
-                    $indexColumns = $this->parseColumns($property->getCustomFlagValue('unique'), array($column->getName()));
+                    $indexColumns = $this->parseColumns($property->getCustomFlagValue('unique'), [$column->getName()]);
                     $onEnd[] = $this->createIndexClosure($table, $indexColumns, true);
                 }
 
                 if ($property->hasCustomFlag('index')) {
-                    $indexColumns = $this->parseColumns($property->getCustomFlagValue('index'), array($column->getName()));
+                    $indexColumns = $this->parseColumns($property->getCustomFlagValue('index'), [$column->getName()]);
                     $onEnd[] = $this->createIndexClosure($table, $indexColumns, false);
                 }
 
@@ -284,14 +303,19 @@ class LeanMapperSchemaGenerator
     /**
      * @param $table
      * @return Property
+     * @throws \Exception
      */
     private function getRelationshipColumnProperty($table)
     {
         $class = $this->mapper->getEntityClass($table);
+        if (!class_exists($class)) {
+            throw new \Exception;
+        }
         /** @var Entity $entity */
         $entity = new $class;
         $primaryKey = $this->mapper->getPrimaryKey($table);
-        return $entity->getReflection($this->mapper)->getEntityProperty($primaryKey);
+        $primryKeyField = $this->mapper->getEntityField($table, $primaryKey);
+        return $entity->getReflection($this->mapper)->getEntityProperty($primryKeyField);
     }
 
 

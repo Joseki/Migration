@@ -33,7 +33,7 @@ class Create extends Command
         $this->setName('joseki:migration:create');
         $this->setDescription('Create an empty migration');
 
-        $this->addArgument('name', InputArgument::REQUIRED, 'Migration name');
+        $this->addArgument('name', InputArgument::OPTIONAL, 'Migration name', 'LeanMapper generated');
     }
 
 

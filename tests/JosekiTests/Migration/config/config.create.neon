@@ -11,4 +11,4 @@ Migration:
 
 services:
   mapper: LeanMapper\DefaultMapper
-  connection: DibiConnection(%db%)
+  connection: Dibi\Connection(%db%)
