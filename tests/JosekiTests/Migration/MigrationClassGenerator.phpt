@@ -31,7 +31,7 @@ class MigrationClassGeneratorTest extends \Tester\TestCase
         $generator->saveToDirectory(__DIR__ . '/output/');
         Assert::true(file_exists($file));
 
-        $expectedFile = __DIR__ . "/files/migration.class.generator.expected";
+        $expectedFile = __DIR__ . (PHP_VERSION_ID < 50600 ? "/files/migration.class.generator.expected" : "/files/migration.class.generator.56.expected");
         Assert::matchFile($expectedFile, $generator->__toString());
         Assert::matchFile($expectedFile, file_get_contents($file));
 
