@@ -4,13 +4,15 @@ namespace Joseki\Migration;
 
 use Joseki\Migration\Database\Repository;
 use Joseki\Migration\Generator\MigrationClassGenerator;
-use Nette\Object;
+use Nette;
 
 /**
  * @method onEvent($message)
  */
-class Manager extends Object
+class Manager
 {
+    use Nette\SmartObject;
+
     public $onEvent = [];
 
     /** @var string */
