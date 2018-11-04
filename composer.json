@@ -11,7 +11,7 @@
         "role": "Lead Developer"
     }],
     "require": {
-        "php": ">=5.3.2",
+        "php": "~7.0",
         "dibi/dibi": "~3.0",
         "doctrine/dbal": "2.4.2",
         "joseki/console": "~0.1",
